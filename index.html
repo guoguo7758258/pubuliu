@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>瀑布流图片展示</title>
+
+
+<style type="text/css">
+*{margin:0;padding:0;list-style-type:none;}
+a,img{border:0;}
+#box{width: 80%;margin: 0 auto;position: relative;}
+.item {box-shadow: 2px 2px 2px #999;position: absolute;}
+
+</style>
+
+</head>
+
+<body>
+<div id="box">
+    <div class="item"><img src="images/01.jpg"></div>
+    <div class="item"><img src="images/02.jpg"></div>
+    <div class="item"><img src="images/03.jpg"></div>
+    <div class="item"><img src="images/04.jpg"></div>
+    <div class="item"><img src="images/05.jpg"></div>
+    <div class="item"><img src="images/06.jpg"></div>
+    <div class="item"><img src="images/07.jpg"></div>
+    <div class="item"><img src="images/08.jpg"></div>
+    <div class="item"><img src="images/09.jpg"></div>
+    <div class="item"><img src="images/10.jpg"></div>
+    <div class="item"><img src="images/11.jpg"></div>
+    <div class="item"><img src="images/12.jpg"></div>
+    <div class="item"><img src="images/13.jpg"></div>
+    <div class="item"><img src="images/14.jpg"></div>
+    <div class="item"><img src="images/15.jpg"></div>
+    <div class="item"><img src="images/16.jpg"></div>
+    <div class="item"><img src="images/17.jpg"></div>
+</div>
+<script src="../../tools.js"></script>
+<script>
+    
+
+window.onload = function() {
+    var box = document.getElementById('box');
+    
+    // 定义每一列之间的间隙 为10像素
+    var gap = 10;
+    var items;
+    var timer = null;
+    
+    function waterfall(){
+    	//用来存每一列的top值
+    	var arr = [];
+    	//找到所有的item
+    	items = box.children;
+    	//一行有多少列
+    	var column = parseInt((box.offsetWidth + gap) / (items[0].offsetWidth + gap));
+    	
+    	//铺图片
+    	for(var i = 0; i < items.length; i++){
+    		items[i].style.left = (i%column)*(items[0].offsetWidth + gap) + "px";
+    		
+    		if(i < column){
+    			//第一行
+    			items[i].style.top = "0px";
+    			//arr插入第二行的top
+    			arr.push(items[i].offsetTop + items[i].offsetHeight + gap);
+    		}else{
+    			//其他行
+    			items[i].style.top = arr[i%column] + "px";
+    			//为下一行做准备，修改arr的值
+    			//arr[i%column] = items[i].offsetTop + items[i].offsetHeight + gap;
+    			arr[i%column] = arr[i%column] + items[i].offsetHeight + gap;
+    		}
+    		
+    	}
+    	
+    	
+    	
+    }
+    waterfall();
+    
+    window.onresize = waterfall;
+    
+    window.onscroll = function(){
+    	clearTimeout(timer);
+    	var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+    	//判断滚动距离
+    	if((scrollTop + getBody().height )> items[items.length-1].offsetTop){
+    		//向服务器请求新的图片数据
+    		//使用超时定时器模拟加载数据
+    		timer = setTimeout(function(){
+    			var datas = [
+                    "images/01.jpg",
+                    "images/02.jpg",
+                    "images/03.jpg",
+                    "images/04.jpg",
+                    "images/05.jpg",
+                    "images/06.jpg",
+                    "images/07.jpg",
+                    "images/08.jpg",
+                    "images/09.jpg",
+                    "images/10.jpg",
+                    "images/11.jpg",
+                    "images/12.jpg",
+                    "images/13.jpg",
+                    "images/14.jpg",
+                    "images/15.jpg",
+                    "images/16.jpg",
+                    "images/17.jpg"
+                ];
+                
+                var str = "";
+                for(var i = 0; i < datas.length; i++){
+                	str += `<div class="item"><img src="${datas[i]}"></div>`;
+                }
+                box.innerHTML += str;
+                
+                waterfall();
+                
+                
+    		},1000);
+    	}
+    }
+    
+        
+                
+}
+</script>
+
+</body>
+</html>
